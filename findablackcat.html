@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find A Black Cat</title>
+    <style>
+        #footer{
+            position:fixed;
+            right: 0;
+            bottom: 0;
+        }
+        html,body{height: 100%;}
+        #root{height: 100%;}
+    </style>
+</head>
+
+<body scroll="no" bgcolor="black"  style="color: ghostwhite; "  >
+    
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root" >
+      
+        <aside style="float: right;" >
+            <div >
+                <div>欢迎你来到这个游戏！</div>
+                <div>在这里你将体验祖海馨的找猫生活！</div>
+                <div>这只小黑猫的名字叫大傻子</div>
+                <div>快来寻找她吧！</div>
+                <br/>
+                <div style="font-size: large;font-weight: 800;">你的分数：</div>
+                <span id="catnum"  style="font-size: large;"></span>
+            </div>
+        </aside > 
+        <img src="blackcat.jpg" id="black cat" height="130px" width="130px" onclick="wonAndRestart()"/>
+        <audio src="miao.m4a" id="miao"  autoplay="autoplay" controls="controls" loop="-1" /></audio>
+        
+        <div id="footer"> <a href="海星觉得海星还行.html" >作者：海星觉得海星还行</a>  </div>
+        <!-- <span id="zuobiao"></span>
+        <span id="dis"></span> -->
+
+    </div>
+</body>
+<script>
+
+
+        //图片随机出现，cat hiding
+    function catHiding(){
+        var a = Math.random();
+        var b = Math.random();
+        if(parseInt(b*1000)>500){
+        b=500;
+        }
+        var ss = document.getElementById("black cat");
+        ss.style.cssText = "top:"+(b+150)+"px;position:absolute;left:"+parseInt(a*1000)+"px;";
+    }
+    catHiding();
+        //鼠标越靠近猫音量越大、速度越快
+
+        var getPositionAtCenter = function (element) {
+        var data = element.getBoundingClientRect();
+        return {
+            x: data.left + data.width / 2,
+            y: data.top + data.height / 2
+            };
+        };
+        var aPosition = getPositionAtCenter(document.getElementById("black cat"));
+        m=aPosition.x;
+        n=aPosition.y;
+
+        var box = document.getElementById('root');
+        var zuobiao = document.getElementById('zuobiao');
+
+        box.addEventListener('mousemove', function (ev) {
+        var e = ev || window.event;
+        var x = e.pageX- box.offsetLeft;
+        var y = e.pageY- box.offsetTop;
+        // zuobiao.innerText = '(' + x + ',' + y + ')';
+        var distance= Math.sqrt((x-m)*(x-m)+(y-n)*(y-n));
+        distance=distance.toFixed(1);
+        var dd=0.1+distance/1800;
+        dd=dd.toFixed(1);
+        dd=1-dd
+        // dis.innerText=dd;
+        document.getElementById("miao").volume=dd;
+        document.getElementById("miao").playbackRate=0.7+dd;
+        })
+
+        //完成游戏重新开始并统计一共找到多少只猫
+        var  catsnum=0;
+        function wonAndRestart(){
+            catsnum += 1;
+            catnum.innerText=catsnum;
+            var se=confirm("真棒！你成功找到了小黑猫！请问要重新开始游戏吗？");
+            if(se=true){
+                catHiding();
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // var catVol = document.getElementById("miao");
+        // window.onload = function(){
+        // setInterval(catVol.volume = dis.innerText, 1000);
+        // }
+
+
+
+        // var getDistanceBetweenElements = function(a) {
+        // var aPosition = getPositionAtCenter(a);
+        // var mousePosition = getPositionAtCenter(MouseEvent);
+
+        // return Math.sqrt(
+        //     Math.pow(aPosition.x - bPosition.x, 2) + 
+        //     Math.pow(aPosition.y - bPosition.y, 2) 
+        // );
+        // };
+
+        // var distance = getDistanceBetweenElements(document.getElementById("black cat"),MouseEvent);
+
+
+        // var getdistance = function (event) {
+        // var e = event || window.event;
+        // var scrollX = document.documentElement.scrollLeft || document.body.scrollLeft;
+        // var scrollY = document.documentElement.scrollTop || document.body.scrollTop;
+        // var x = e.pageX || e.clientX + scrollX;
+        // var y = e.pageY || e.clientY + scrollY;
+        // return Math.sqrt(x*x+y*y);
+        // }
+        // var d = parseInt(getdistance(document.getElementById("black cat")))
+
+        // var catVol = document.getElementById("miao")
+        // window.onload = function(){
+        // setInterval(catVol.volume = 0.2+distance/1300, 1000);
+        // }
+
+</script>

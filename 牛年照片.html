@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>海星的牛年镇圈之宝</title>
+    <style>
+        ul{
+    	list-style: none;
+        }
+        #footer{
+            bottom: 0px;
+            background-color:black;
+            color:#FFFFFF;
+            text-align: center;
+            clear: both;
+
+        }
+        #img1{
+            height: 80%;
+            width: 80%;
+
+        }
+        #ul1 li{
+            height: 80%;
+            width: 80%;
+        }
+        a{
+            color: #FFFFFF;
+        }
+        
+        html,body{height: 100%;}
+        #root{height: 100%;}
+    </style>
+</head>
+<body bgcolor="black">
+    <div id="div_2">
+        <p style="text-align: center;">
+        <img id="img1" src="照片1.jpg" onmouseout="dongtupian()" onmouseover="stoptupian()">
+        <ul id="ul1">
+            <li id="li1" onmouseover="tingtupian(1,this)" onmouseout="jixu()"></li>
+            <li id="li2" onmouseover="tingtupian(2,this)" onmouseout="jixu()"></li>
+            <li id="li3" onmouseover="tingtupian(3,this)" onmouseout="jixu()"></li>
+            <li id="li4" onmouseover="tingtupian(4,this)" onmouseout="jixu()"></li>
+            <li id="li5" onmouseover="tingtupian(5,this)" onmouseout="jixu()"></li>
+        </ul>
+        </p>
+    </div>
+    <div id="footer"><a href="海星觉得海星还行.html">海星觉得海星还行的牛年镇圈之宝</a></div>
+</body>
+<script>
+    var n=1;//图片标记数
+var dingshiqi;//让图片动的定时器
+window.onload=init;
+function init(){
+	dingshiqi=window.setInterval("picture()",1500);
+	beijing=document.getElementById("li1");
+}
+//换图片函数
+function picture(){			
+	var obj=document.getElementById("img1");
+	n++;
+	if(n>=6){
+		n=1;
+	}
+	obj.src="照片"+n+".jpg";
+	for(var i=1;i<=5;i++){
+		var li1=document.getElementById("li"+i);
+	}
+	beijing=document.getElementById("li"+n);
+}
+//鼠标放上停止图片的函数
+function stoptupian(){
+	window.clearInterval(dingshiqi);
+}
+//鼠标离开图片继续动的函数
+function dongtupian(){
+	dingshiqi=window.setInterval("tupian()",1500);
+}
+//鼠标放到li上停止图片查看指定的图片
+function tingtupian(i,lin){
+	//获得id为img1这个标签
+	var obj=document.getElementById("img1");
+	//改变对象的src属性换图片
+	n=i;
+	obj.src="照片"+n+".jpg";
+	//清除定时器
+	window.clearInterval(dingshiqi);
+	switching
+(lin);
+}
+//让定时器继续换图片
+function jixu(){
+	dingshiqi=window.setInterval("picture()",1500);
+}
+function switching(lin){
+	for(var m=1;m<=5;m++){
+		var li1=document.getElementById("li"+m);
+	}
+}
+</script>
+
+
+
+
