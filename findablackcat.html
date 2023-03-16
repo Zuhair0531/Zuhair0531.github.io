@@ -15,7 +15,7 @@
     </style>
 </head>
 
-<body scroll="no" bgcolor="black"  style="color: ghostwhite; "  >
+<body scroll="no" bgcolor="white"  style="color: ghostwhite; "  >
     
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root" >
@@ -23,9 +23,9 @@
         <aside style="float: right;" >
             <div >
                 <div>欢迎你来到这个游戏！</div>
-                <div>在这里你将体验祖海馨的找猫生活！</div>
-                <div>这只小黑猫的名字叫大傻子</div>
-                <div>快来寻找她吧！</div>
+                <div>在这里你将切身体会微塑料的无处不在！</div>
+                <div>这里有无微给你的声音提示</div>
+                <div>快来寻找无微帮你消灭微塑料吧！</div>
                 <br/>
                 <div style="font-size: large;font-weight: 800;">你的分数：</div>
                 <span id="catnum"  style="font-size: large;"></span>
@@ -90,7 +90,7 @@
         function wonAndRestart(){
             catsnum += 1;
             catnum.innerText=catsnum;
-            var se=confirm("真棒！你成功找到了小黑猫！请问要重新开始游戏吗？");
+            var se=confirm("真棒！你成功找到了无微战士，他帮你消灭了微塑料！请问要重新开始游戏吗？");
             if(se=true){
                 catHiding();
             }
