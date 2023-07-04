@@ -1,0 +1,38 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #F5F5F5;
+  text-align: center;
+  color: #333333;
+  line-height: 1.5;
+}
+
+header h1 {
+  margin-top: 50px;
+  font-size: 36px;
+  color: #FF4081;
+}
+
+.photo-container {
+  margin-top: 30px;
+}
+
+.photo-container img {
+  max-width: 400px;
+  height: auto;
+  border-radius: 10px;
+}
+
+.content {
+  margin: 30px auto;
+  max-width: 600px;
+}
+
+.content h2 {
+  font-size: 24px;
+}
+
+.signature {
+  font-size: 18px;
+  font-style: italic;
+  margin-top: 30px;
+}
