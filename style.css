@@ -36,3 +36,40 @@ header h1 {
   font-style: italic;
   margin-top: 30px;
 }
+.timeline {
+  max-width: 600px;
+  margin: 50px auto;
+  border-left: 2px solid #333;
+  position: relative;
+  padding-top: 20px;
+}
+
+.event {
+  position: relative;
+  margin-bottom: 20px;
+  padding-left: 30px;
+}
+
+.date {
+  font-weight: bold;
+  color: #FF4081;
+}
+
+.description {
+  margin-top: 10px;
+}
+
+.event:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -6px;
+  width: 12px;
+  height: 12px;
+  background-color: #FF4081;
+  border-radius: 50%;
+}
+
+.event:last-child:before {
+  display: none;
+}
