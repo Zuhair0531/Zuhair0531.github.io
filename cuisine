@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>公司附近美食记录</title>
+    <style>
+        :root {
+            --primary-color: #ff7b54;
+            --secondary-color: #ffb26b;
+            --light-color: #ffd56f;
+            --bg-color: #f9f5eb;
+            --text-color: #333;
+            --delivery-color: #4caf50;
+            --dinein-color: #2196f3;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .recommendation-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        
+        .recommend-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px 5px;
+        }
+        
+        .recommend-btn:hover {
+            background: #ff6b3d;
+            transform: translateY(-2px);
+        }
+        
+        .recommendation-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .selected-restaurant {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .selected-dishes {
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+        
+        .filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .type-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .type-tab {
+            padding: 10px 25px;
+            background: white;
+            border: none;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            margin: 0 5px;
+        }
+        
+        .type-tab.active {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .restaurant-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .restaurant-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .restaurant-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .card-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .delivery .card-header {
+            background: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--delivery-color);
+        }
+        
+        .dinein .card-header {
+            background: rgba(33, 150, 243, 0.1);
+            border-left: 4px solid var(--dinein-color);
+        }
+        
+        .restaurant-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+        
+        .type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .delivery .type-badge {
+            background: var(--delivery-color);
+            color: white;
+        }
+        
+        .dinein .type-badge {
+            background: var(--dinein-color);
+            color: white;
+        }
+        
+        .rating {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .rating.good {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .rating.average {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .rating.poor {
+            background: #f44336;
+            color: white;
+        }
+        
+        .card-body {
+            padding: 20px;
+        }
+        
+        .dishes {
+            margin-bottom: 15px;
+        }
+        
+        .dish-item {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+        
+        .dish-item:before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+        
+        .price {
+            color: #e91e63;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .notes {
+            font-style: italic;
+            color: #666;
+            border-top: 1px dashed #eee;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .restaurant-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .filters {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>公司附近美食记录</h1>
+        <p class="subtitle">记录每日工作餐，探索周边美食</p>
+    </header>
+    
+    <div class="recommendation-section">
+        <h2>不知道吃什么？让我帮你选！</h2>
+        <button class="recommend-btn" id="randomDelivery">随机推荐外卖</button>
+        <button class="recommend-btn" id="randomDinein">随机推荐堂食</button>
+        <button class="recommend-btn" id="randomAll">随便推荐一个</button>
+        
+        <div class="recommendation-result" id="recommendationResult">
+            <p>点击上方按钮获取今日推荐</p>
+        </div>
+    </div>
+    
+    <div class="type-tabs">
+        <button class="type-tab active" data-type="all">全部餐厅</button>
+        <button class="type-tab" data-type="delivery">外卖</button>
+        <button class="type-tab" data-type="dinein">堂食</button>
+    </div>
+    
+    <div class="filters">
+        <button class="filter-btn active" data-filter="all">全部</button>
+        <button class="filter-btn" data-filter="good">强烈推荐</button>
+        <button class="filter-btn" data-filter="average">还可以</button>
+        <button class="filter-btn" data-filter="poor">不推荐</button>
+        <button class="filter-btn" data-filter="cheap">便宜实惠</button>
+    </div>
+    
+    <div class="restaurant-grid" id="restaurantGrid">
+        <!-- 外卖餐厅 -->
+        <div class="restaurant-card delivery" data-rating="good" data-price="medium">
+            <div class="card-header">
+                <div class="restaurant-name">绿茶餐厅</div>
+                <span class="type-badge">外卖</span>
+            </div>
+            <div class="card-body">
+                <span class="rating good">推荐</span>
+                <div class="dishes">
+                    <div class="dish-item">烤鸡套餐</div>
+                </div>
+                <div class="price">28元</div>
+                <div class="notes">好吃但分量大，吃不完</div>
+            </div>
+        </div>
+        
+        <!-- 更多外卖餐厅卡片... -->
+        
+        <!-- 堂食餐厅 -->
+        <div class="restaurant-card dinein" data-rating="good" data-price="low" data-cheap="true">
+            <div class="card-header">
+                <div class="restaurant-name">沙县小吃</div>
+                <span class="type-badge">堂食</span>
+            </div>
+            <div class="card-body">
+                <span class="rating good">推荐</span>
+                <div class="dishes">
+                    <div class="dish-item">炸云吞</div>
+                    <div class="dish-item">葱油拌面</div>
+                </div>
+                <div class="notes">美食荒漠的救星</div>
+            </div>
+        </div>
+        
+        <!-- 更多堂食餐厅卡片... -->
+        
+    </div>
+    
+    <footer>
+        <p>© 2023 公司附近美食记录 | 持续更新中</p>
+    </footer>
+    
+    <script>
+        // 餐厅数据
+        const restaurants = [
+            // 外卖餐厅
+            {
+                name: "绿茶餐厅",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["烤鸡套餐"],
+                priceInfo: "28元",
+                notes: "好吃但分量大，吃不完"
+            },
+            {
+                name: "食野",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["Pasta＋鸡腿肉＋鱼饼＋酸奶"],
+                notes: ""
+            },
+            {
+                name: "王记烩面胡辣汤",
+                type: "delivery",
+                rating: "average",
+                price: "low",
+                dishes: ["牛肉馅饼", "胡辣汤加油条"],
+                notes: "牛肉馅饼好吃；胡辣汤加油条吃完心悸，不要空腹吃"
+            },
+            {
+                name: "粥生如故",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["汤包", "汤和鸡肉肠粉"],
+                notes: "汤包不好吃；汤和鸡肉肠粉还可以"
+            },
+            {
+                name: "鲜可时",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["话梅招牌排骨饭", "土豆牛肉", "翅根"],
+                notes: "话梅排骨好吃；土豆牛肉也好吃；翅根一般"
+            },
+            {
+                name: "裕茗广式茶点",
+                type: "delivery",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "不好吃，很一般"
+            },
+            {
+                name: "锦城里 潮汕牛肉火锅",
+                type: "delivery",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["牛肉粿条荷包蛋", "拼好饭9.9元"],
+                priceInfo: "9.9元",
+                notes: "好吃便宜！！"
+            },
+            {
+                name: "袁记云饺",
+                type: "delivery",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["鸡肉云吞", "拼好饭6.9-8.9元"],
+                priceInfo: "6.9-8.9元",
+                notes: "好吃便宜低卡"
+            },
+            {
+                name: "下午三点",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["超级牛油果卡士"],
+                notes: "浓郁好喝！附近最好喝的牛油果"
+            },
+            {
+                name: "白塔洪记鲜牛肉",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["三拼粿条"],
+                notes: "好吃"
+            },
+            {
+                name: "甘草水果",
+                type: "delivery",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: [],
+                notes: "便宜好吃"
+            },
+            {
+                name: "蜀签签",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "一般般"
+            },
+            {
+                name: "酱骨当家",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "还可以"
+            },
+            {
+                name: "舍里日料",
+                type: "delivery",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "难吃死了"
+            },
+            {
+                name: "混果汁",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "一般般 一般好喝但是贵"
+            },
+            {
+                name: "朴谈炸鸡",
+                type: "delivery",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "不好吃"
+            },
+            {
+                name: "老司机脆皮手撕鸡",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "好吃！"
+            },
+            {
+                name: "寻湘迹",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "好吃 略辣"
+            },
+            {
+                name: "擂茶饭",
+                type: "delivery",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "诡异的绿化带和树叶撕吧撕吧塞你嘴里的味道，难吃"
+            },
+            {
+                name: "极鲜100%桑拿鸡",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "一般且量很少"
+            },
+            {
+                name: "马后炮鲜货烧烤",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "一般"
+            },
+            {
+                name: "茉莉奶白",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["花青莓果软法酪"],
+                notes: "绝了 很好喝"
+            },
+            {
+                name: "粤金汤",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "淡淡的 挺好喝"
+            },
+            {
+                name: "永利来",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["黯然销魂饭"],
+                notes: "很一般 煎蛋还是用模具煎的"
+            },
+            {
+                name: "金戈戈",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "有点咸 吃完上火"
+            },
+            {
+                name: "干锅排骨",
+                type: "delivery",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "不好吃 量少 合成肉"
+            },
+            {
+                name: "喜茶",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["碎银子糯糯", "苹果杏"],
+                notes: "好喝"
+            },
+            {
+                name: "海底捞下饭火锅菜",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["捞派肥牛冒菜"],
+                notes: "不要米饭一个人吃刚刚好吃撑，量挺大的"
+            },
+            {
+                name: "巷子里的酸菜鱼",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["酸菜鱼"],
+                notes: "还可以，就是有刺儿"
+            },
+            {
+                name: "萨莉亚",
+                type: "delivery",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["炒蘑菇", "布布拉塔芝士意面", "烤菠菜"],
+                notes: "炒蘑菇好吃。布布拉塔芝士意面好吃。烤菠菜有一点点儿不好吃"
+            },
+            {
+                name: "椰莱泰小谷",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["鸡排"],
+                notes: "还可以 鸡排是蒜香的 吃完晕碳"
+            },
+            {
+                name: "渔虞 顺德鱼生",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["鱼生"],
+                notes: "感觉我放的料太多了 有点咸 量很大，挺新鲜的"
+            },
+            {
+                name: "有间泡面",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["不倒翁拉面套餐"],
+                notes: "芝士味的，面是三养那种粗粗qq的面条 很好吃诶"
+            },
+            {
+                name: "大卡司",
+                type: "delivery",
+                rating: "good",
+                price: "medium",
+                dishes: ["鸡翅", "咸乳酪青梅绿茶"],
+                notes: "鸡翅好吃！咸乳酪青梅绿茶一般般"
+            },
+            {
+                name: "谷小顺",
+                type: "delivery",
+                rating: "average",
+                price: "medium",
+                dishes: ["炒吊龙", "蛋羹"],
+                notes: "炒吊龙一般般 蛋羹好硬"
+            },
+            
+            // 堂食餐厅
+            {
+                name: "沙县小吃",
+                type: "dinein",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["炸云吞", "葱油拌面"],
+                notes: "美食荒漠的救星"
+            },
+            {
+                name: "山葵烤肉",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["山葵烤牛肉", "凤梨牛排"],
+                notes: "好吃！"
+            },
+            {
+                name: "佬地方海鲜粥店",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["粥底小火锅"],
+                notes: "每周必去，好吃！"
+            },
+            {
+                name: "渔米粥",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["脆鱼肉"],
+                notes: "好吃"
+            },
+            {
+                name: "十一妹土鸡打边炉",
+                type: "dinein",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["雪花牛肉", "鸡肉"],
+                notes: "雪花牛肉好吃！便宜！鸡肉脆脆的！一定要烫五六秒就捞起来，不然硬了就不好吃了"
+            },
+            {
+                name: "小筋牛·小铝盆烤肉（马峦路店）",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "好吃 量大"
+            },
+            {
+                name: "脆鲜生·脆鲩鱼火锅（大运天地店）",
+                type: "dinein",
+                rating: "average",
+                price: "medium",
+                dishes: ["煮的鱼", "炸鱼"],
+                notes: "煮的好吃；炸鱼不好吃"
+            },
+            {
+                name: "北烤场",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["大拌菜", "雪花牛肉粒", "菠萝牛肋条"],
+                notes: "好吃 服务太差了！（已倒闭）"
+            },
+            {
+                name: "爱烤吧",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["烈火牛肉串（略辣）", "安格斯肥牛", "羔羊串", "烤香菇", "芝士焗生蚝"],
+                notes: "好吃！推荐烈火牛肉串，安格斯肥牛，羔羊串、烤香菇（巨好吃！）；芝士焗生蚝不好吃"
+            },
+            {
+                name: "椰林印象",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["单人餐"],
+                notes: "好吃 有单人餐，晚上有表演，吉他手很帅"
+            },
+            {
+                name: "九极道潮汕牛肉火锅",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["单人餐"],
+                notes: "有单人餐 便宜 好吃"
+            },
+            {
+                name: "野·大山里野生菌石锅土鸡（益田假日店）",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: ["见手青"],
+                notes: "好吃！但是其实见手青一般般，尝鲜两人餐够够的了"
+            },
+            {
+                name: "马老二炝锅鱼",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "好吃，但是有刺"
+            },
+            {
+                name: "财神糖水铺",
+                type: "dinein",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["炸掌中宝", "车仔面乌冬面", "椰汁紫薯黑糯米", "芒果椰汁西米露"],
+                notes: "好吃便宜！推荐炸掌中宝；车仔面乌冬面也不错；椰汁紫薯黑糯米也还不错；芒果椰汁西米露一般般；适合一人食"
+            },
+            {
+                name: "悦得来",
+                type: "dinein",
+                rating: "average",
+                price: "medium",
+                dishes: ["烤乳鸽", "四喜虾皇", "潮州鲜虾肠粉", "鲍鱼"],
+                notes: "烤乳鸽一般，不建议点；四喜虾皇好吃 要蘸着汤吃；潮州鲜虾肠粉很好吃，虽然是小生蚝，但是给的很多而且很肥；虾很新鲜！！鲍鱼也是新鲜的，不是泡发的，炖汤也好喝"
+            },
+            {
+                name: "鑫隆行牛肉火锅",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "新鲜好吃，63双人套餐划算"
+            },
+            {
+                name: "秦福隆·碳烤鲜牛（坪山老街店）",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "新鲜！好吃！但是竹园店不好吃"
+            },
+            {
+                name: "汉阳廷",
+                type: "dinein",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "不好吃别去"
+            },
+            {
+                name: "大鼎牛肉",
+                type: "dinein",
+                rating: "average",
+                price: "medium",
+                dishes: ["粿条"],
+                notes: "还不错，就是粿条是细的一般般"
+            },
+            {
+                name: "ido 我愿意咖啡店",
+                type: "dinein",
+                rating: "average",
+                price: "medium",
+                dishes: [],
+                notes: "漂亮饭 味道一般但也不踩雷，适合约会或者坐坐"
+            },
+            {
+                name: "2.5美食城四川卤菜夫妻店",
+                type: "dinein",
+                rating: "good",
+                price: "low",
+                cheap: true,
+                dishes: ["护心肉"],
+                notes: "夫妻店好吃！推荐护心肉。一定要去夫妻店，另一家不好吃还不干净"
+            },
+            {
+                name: "繁楼",
+                type: "dinein",
+                rating: "good",
+                price: "medium",
+                dishes: [],
+                notes: "好吃！！每个菜都好吃不踩雷"
+            },
+            {
+                name: "2.5号美食城对面重庆烤鱼烧烤",
+                type: "dinein",
+                rating: "poor",
+                price: "medium",
+                dishes: [],
+                notes: "变难吃了。。。有点发苦"
+            },
+            {
+                name: "坪山格兰云天国际酒店·燕子屋日本餐厅",
+                type: "dinein",
+                rating: "average",
+                price: "high",
+                dishes: ["鹅肝寿司"],
+                notes: "有服务费！鹅肝寿司不好吃。。美团那个168套餐还行"
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const typeTabs = document.querySelectorAll('.type-tab');
+            const restaurantGrid = document.getElementById('restaurantGrid');
+            const randomDeliveryBtn = document.getElementById('randomDelivery');
+            const randomDineinBtn = document.getElementById('randomDinein');
+            const randomAllBtn = document.getElementById('randomAll');
+            const recommendationResult = document.getElementById('recommendationResult');
+            
+            // 渲染餐厅卡片
+            function renderRestaurants(restaurantsToRender) {
+                restaurantGrid.innerHTML = '';
+                
+                restaurantsToRender.forEach(restaurant => {
+                    const card = document.createElement('div');
+                    card.className = `restaurant-card ${restaurant.type}`;
+                    card.setAttribute('data-rating', restaurant.rating);
+                    card.setAttribute('data-price', restaurant.price);
+                    if (restaurant.cheap) {
+                        card.setAttribute('data-cheap', 'true');
+                    }
+                    
+                    let dishesHTML = '';
+                    if (restaurant.dishes && restaurant.dishes.length > 0) {
+                        dishesHTML = `<div class="dishes">${restaurant.dishes.map(dish => `<div class="dish-item">${dish}</div>`).join('')}</div>`;
+                    }
+                    
+                    let priceHTML = '';
+                    if (restaurant.priceInfo) {
+                        priceHTML = `<div class="price">${restaurant.priceInfo}</div>`;
+                    }
+                    
+                    let notesHTML = '';
+                    if (restaurant.notes) {
+                        notesHTML = `<div class="notes">${restaurant.notes}</div>`;
+                    }
+                    
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div class="restaurant-name">${restaurant.name}</div>
+                            <span class="type-badge">${restaurant.type === 'delivery' ? '外卖' : '堂食'}</span>
+                        </div>
+                        <div class="card-body">
+                            <span class="rating ${restaurant.rating}">${getRatingText(restaurant.rating)}</span>
+                            ${dishesHTML}
+                            ${priceHTML}
+                            ${notesHTML}
+                        </div>
+                    `;
+                    
+                    restaurantGrid.appendChild(card);
+                });
+            }
+            
+            function getRatingText(rating) {
+                switch(rating) {
+                    case 'good': return '推荐';
+                    case 'average': return '还可以';
+                    case 'poor': return '不推荐';
+                    default: return '';
+                }
+            }
+            
+            // 初始渲染
+            renderRestaurants(restaurants);
+            
+            // 筛选功能
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.getAttribute('data-filter');
+                    filterRestaurants(filter);
+                });
+            });
+            
+            // 类型标签功能
+            typeTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    typeTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const type = this.getAttribute('data-type');
+                    filterByType(type);
+                });
+            });
+            
+            function filterRestaurants(filter) {
+                const activeType = document.querySelector('.type-tab.active').getAttribute('data-type');
+                let filtered = restaurants;
+                
+                // 先按类型筛选
+                if (activeType !== 'all') {
+                    filtered = filtered.filter(r => r.type === activeType);
+                }
+                
+                // 再按评分/价格筛选
+                if (filter === 'good') {
+                    filtered = filtered.filter(r => r.rating === 'good');
+                } else if (filter === 'average') {
+                    filtered = filtered.filter(r => r.rating === 'average');
+                } else if (filter === 'poor') {
+                    filtered = filtered.filter(r => r.rating === 'poor');
+                } else if (filter === 'cheap') {
+                    filtered = filtered.filter(r => r.cheap);
+                }
+                
+                renderRestaurants(filtered);
+            }
+            
+            function filterByType(type) {
+                const activeFilter = document.querySelector('.filter-btn.active').getAttribute('data-filter');
+                let filtered = restaurants;
+                
+                if (type !== 'all') {
+                    filtered = filtered.filter(r => r.type === type);
+                }
+                
+                if (activeFilter === 'good') {
+                    filtered = filtered.filter(r => r.rating === 'good');
+                } else if (activeFilter === 'average') {
+                    filtered = filtered.filter(r => r.rating === 'average');
+                } else if (activeFilter === 'poor') {
+                    filtered = filtered.filter(r => r.rating === 'poor');
+                } else if (activeFilter === 'cheap') {
+                    filtered = filtered.filter(r => r.cheap);
+                }
+                
+                renderRestaurants(filtered);
+            }
+            
+            // 随机推荐功能
+            function getRandomRestaurant(type = 'all') {
+                let pool = restaurants;
+                
+                if (type === 'delivery') {
+                    pool = restaurants.filter(r => r.type === 'delivery');
+                } else if (type === 'dinein') {
+                    pool = restaurants.filter(r => r.type === 'dinein');
+                }
+                
+                if (pool.length === 0) return null;
+                
+                const randomIndex = Math.floor(Math.random() * pool.length);
+                return pool[randomIndex];
+            }
+            
+            function displayRecommendation(restaurant) {
+                if (!restaurant) {
+                    recommendationResult.innerHTML = '<p>没有找到符合条件的餐厅</p>';
+                    return;
+                }
+                
+                let dishesHTML = '';
+                if (restaurant.dishes && restaurant.dishes.length > 0) {
+                    dishesHTML = `<div class="selected-dishes">推荐菜品: ${restaurant.dishes.join('、')}</div>`;
+                }
+                
+                recommendationResult.innerHTML = `
+                    <div class="selected-restaurant">${restaurant.name} (${restaurant.type === 'delivery' ? '外卖' : '堂食'})</div>
+                    ${dishesHTML}
+                    ${restaurant.notes ? `<div class="selected-dishes">备注: ${restaurant.notes}</div>` : ''}
+                `;
+            }
+            
+            randomDeliveryBtn.addEventListener('click', function() {
+                const restaurant = getRandomRestaurant('delivery');
+                displayRecommendation(restaurant);
+            });
+            
+            randomDineinBtn.addEventListener('click', function() {
+                const restaurant = getRandomRestaurant('dinein');
+                displayRecommendation(restaurant);
+            });
+            
+            randomAllBtn.addEventListener('click', function() {
+                const restaurant = getRandomRestaurant('all');
+                displayRecommendation(restaurant);
+            });
+        });
+    </script>
+</body>
+</html>
