@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>公司附近美食记录</title>
     <style>
+        /* 样式部分保持不变，与之前相同 */
         :root {
             --primary-color: #ff7b54;
             --secondary-color: #ffb26b;
@@ -301,7 +302,7 @@
         <button class="recommend-btn" id="randomAll">随便推荐一个</button>
         
         <div class="recommendation-result" id="recommendationResult">
-            <p>点击上方按钮获取今日推荐</p>
+            <p>点击上方按钮获取今日推荐（只推荐好吃和还可以的餐厅）</p>
         </div>
     </div>
     
@@ -320,42 +321,7 @@
     </div>
     
     <div class="restaurant-grid" id="restaurantGrid">
-        <!-- 外卖餐厅 -->
-        <div class="restaurant-card delivery" data-rating="good" data-price="medium">
-            <div class="card-header">
-                <div class="restaurant-name">绿茶餐厅</div>
-                <span class="type-badge">外卖</span>
-            </div>
-            <div class="card-body">
-                <span class="rating good">推荐</span>
-                <div class="dishes">
-                    <div class="dish-item">烤鸡套餐</div>
-                </div>
-                <div class="price">28元</div>
-                <div class="notes">好吃但分量大，吃不完</div>
-            </div>
-        </div>
-        
-        <!-- 更多外卖餐厅卡片... -->
-        
-        <!-- 堂食餐厅 -->
-        <div class="restaurant-card dinein" data-rating="good" data-price="low" data-cheap="true">
-            <div class="card-header">
-                <div class="restaurant-name">沙县小吃</div>
-                <span class="type-badge">堂食</span>
-            </div>
-            <div class="card-body">
-                <span class="rating good">推荐</span>
-                <div class="dishes">
-                    <div class="dish-item">炸云吞</div>
-                    <div class="dish-item">葱油拌面</div>
-                </div>
-                <div class="notes">美食荒漠的救星</div>
-            </div>
-        </div>
-        
-        <!-- 更多堂食餐厅卡片... -->
-        
+        <!-- 餐厅卡片将通过JavaScript动态生成 -->
     </div>
     
     <footer>
@@ -985,14 +951,17 @@
                 renderRestaurants(filtered);
             }
             
-            // 随机推荐功能
+            // 随机推荐功能 - 只推荐好吃和还可以的
             function getRandomRestaurant(type = 'all') {
                 let pool = restaurants;
                 
+                // 只选择好吃和还可以的餐厅
+                pool = pool.filter(r => r.rating === 'good' || r.rating === 'average');
+                
                 if (type === 'delivery') {
-                    pool = restaurants.filter(r => r.type === 'delivery');
+                    pool = pool.filter(r => r.type === 'delivery');
                 } else if (type === 'dinein') {
-                    pool = restaurants.filter(r => r.type === 'dinein');
+                    pool = pool.filter(r => r.type === 'dinein');
                 }
                 
                 if (pool.length === 0) return null;
@@ -1012,8 +981,16 @@
                     dishesHTML = `<div class="selected-dishes">推荐菜品: ${restaurant.dishes.join('、')}</div>`;
                 }
                 
+                let ratingHTML = '';
+                if (restaurant.rating === 'good') {
+                    ratingHTML = '<div style="color:#4caf50; margin:5px 0;">✓ 这家很好吃！</div>';
+                } else if (restaurant.rating === 'average') {
+                    ratingHTML = '<div style="color:#ff9800; margin:5px 0;">○ 这家还可以</div>';
+                }
+                
                 recommendationResult.innerHTML = `
                     <div class="selected-restaurant">${restaurant.name} (${restaurant.type === 'delivery' ? '外卖' : '堂食'})</div>
+                    ${ratingHTML}
                     ${dishesHTML}
                     ${restaurant.notes ? `<div class="selected-dishes">备注: ${restaurant.notes}</div>` : ''}
                 `;
